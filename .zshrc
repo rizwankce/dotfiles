@@ -1,4 +1,4 @@
-f you come from bash you might have to change your $PATH.
+# if you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
@@ -93,3 +93,14 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+# Custom Alias
+
+# Common
+alias ..="cd .."
+
+# Finder
+alias o='open . &'
+
+# Git
+alias gs='git status'
+alias gd='git diff'
