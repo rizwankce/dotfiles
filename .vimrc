@@ -10,7 +10,7 @@
 " + pathogen
 " + typescript-vim
 " + vim-jsx-improve
-"
+" + vim-prettier
 
 set runtimepath^=~/.vim/bundle/ctrlp.vim
 set runtimepath^=~/.vim/bundle/vim-airline/plugin/airline.vim
