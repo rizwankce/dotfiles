@@ -105,3 +105,5 @@ alias o='open . &'
 # Git
 alias gs='git status'
 alias gd='git diff'
+alias gl='git log --oneline'
+alias gdiff='git difftool'
