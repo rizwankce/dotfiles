@@ -1,14 +1,14 @@
 # if you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=/Users/rizwan/Library/Python/2.7/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
-
+export GPG_TTY=$(tty)
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="robbyrussell"
-
+#ZSH_THEME="robbyrussell"
+ZSH_THEME="powerlevel10k/powerlevel10k"
 # Set list of themes to load
 # Setting this variable when ZSH_THEME=random
 # cause zsh load theme from this variable instead of
@@ -96,6 +96,9 @@ source $ZSH/oh-my-zsh.sh
 
 # Custom Alias
 
+# List options via exa
+alias e='exa --long --all --header --git --no-permissions'
+
 # Common
 alias ..="cd .."
 
@@ -107,3 +110,12 @@ alias gs='git status'
 alias gd='git diff'
 alias gl='git log --oneline'
 alias gdiff='git difftool'
+alias glog='git log --pretty=format:"%h : %s  - %an, %ar"'
+
+function take() {
+  mkdir $1 && cd $_
+}
+
+export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init - zsh)"
