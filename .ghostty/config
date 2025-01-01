@@ -1,0 +1,5 @@
+font-size = 20
+cursor-style = block
+window-colorspace = "display-p3"
+theme = GruvboxDarkHard
+#theme = Github Dark
