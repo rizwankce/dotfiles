@@ -166,3 +166,106 @@ export GPT_TTY=$(tty)
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 export PATH="/Users/rizwan:$PATH"
+export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"
+
+
+# -----------------------------------------------------------------------------
+# AI-powered Git Commit Function
+# Copy paste this gist into your ~/.bashrc or ~/.zshrc to gain the `gcm` command. It:
+# 1) gets the current staged changed diff
+# 2) sends them to an LLM to write the git commit message
+# 3) allows you to easily accept, edit, regenerate, cancel
+# But - just read and edit the code however you like
+# the `llm` CLI util is awesome, can get it here: https://llm.datasette.io/en/stable/
+
+# Unalias gcm if it exists (to prevent conflicts)
+unalias gcm 2>/dev/null
+
+# Define the AI-powered gcm function using gemini
+gcm() {
+    # Function to generate commit message using the gemini model
+    generate_commit_message() {
+        git diff --cached | llm -m gemini-2.0-flash-lite "
+You are an expert at writing Git commits. Your job is to write a short clear commit message that summarizes the changes.
+
+If you can accurately express the change in just the subject line, don't include anything in the message body. Only use the body when it is providing *useful* information.
+
+Don't repeat information from the subject line in the message body.
+
+Only return the commit message in your response. Do not include any additional meta-commentary about the task.
+
+Follow good Git style:
+
+- Separate the subject from the body with a blank line
+- Try to limit the subject line to 50 characters
+- Capitalize the subject line
+- Do not end the subject line with any punctuation
+- Use the imperative mood in the subject line
+- Wrap the body at 72 characters
+- Keep the body short and concise (omit it entirely if not useful)
+
+Here are the changes in this commit:
+
+				\`\`\`
+git diff --cached
+\`\`\`
+"
+    }
+
+    # Function to read user input compatibly with both Bash and Zsh
+    read_input() {
+        if [ -n "$ZSH_VERSION" ]; then
+            echo -n "$1"
+            read -r REPLY
+        else
+            read -p "$1" -r REPLY
+        fi
+    }
+
+    # Main script
+    echo "Generating AI-powered commit message using gemini..."
+    commit_message=$(generate_commit_message)
+
+    while true; do
+        echo -e "\nProposed commit message:"
+        echo "$commit_message"
+
+        read_input "Do you want to (a)ccept, (e)dit, (r)egenerate, or (c)ancel? "
+        choice=$REPLY
+
+        case "$choice" in
+            a|A )
+                if git commit -m "$commit_message"; then
+                    echo "Changes committed successfully!"
+                    return 0
+                else
+                    echo "Commit failed. Please check your changes and try again."
+                    return 1
+                fi
+                ;;
+            e|E )
+                read_input "Enter your commit message: "
+                commit_message=$REPLY
+                if [ -n "$commit_message" ] && git commit -m "$commit_message"; then
+                    echo "Changes committed successfully with your message!"
+                    return 0
+                else
+                    echo "Commit failed. Please check your message and try again."
+                    return 1
+                fi
+                ;;
+            r|R )
+                echo "Regenerating commit message using gemini..."
+                commit_message=$(generate_commit_message)
+                ;;
+            c|C )
+                echo "Commit cancelled."
+                return 1
+                ;;
+            * )
+                echo "Invalid choice. Please try again."
+                ;;
+        esac
+    done
+}
+
